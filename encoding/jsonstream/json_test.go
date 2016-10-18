@@ -10,9 +10,9 @@ type record struct {
 	ID int `json:"id"`
 }
 
-func TestStreamEncoder(t *testing.T) {
+func TestEncoder(t *testing.T) {
 	var b bytes.Buffer
-	e := NewStreamEncoder(&b)
+	e := NewEncoder(&b)
 
 	items := []*record{
 		{ID: 1},
@@ -47,7 +47,7 @@ func TestStreamEncoder(t *testing.T) {
 	}
 }
 
-func TestStreamDecoder(t *testing.T) {
+func TestDecoder(t *testing.T) {
 	var b bytes.Buffer
 	b.WriteString(`[
 		{"id": 1},
@@ -55,7 +55,7 @@ func TestStreamDecoder(t *testing.T) {
 		{"id": 3}
 	]`)
 
-	d := NewStreamDecoder(&b)
+	d := NewDecoder(&b)
 
 	exps := []record{
 		{ID: 1},

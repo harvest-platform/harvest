@@ -6,26 +6,26 @@ import (
 	"io"
 )
 
-var ErrStreamClosed = errors.New("json: stream closed")
+var ErrClosed = errors.New("json: stream closed")
 
-type StreamEncoder struct {
+type Encoder struct {
 	w      io.Writer
 	json   *json.Encoder
 	first  bool
 	closed bool
 }
 
-func NewStreamEncoder(w io.Writer) *StreamEncoder {
-	return &StreamEncoder{
+func NewEncoder(w io.Writer) *Encoder {
+	return &Encoder{
 		w:     w,
 		json:  json.NewEncoder(w),
 		first: true,
 	}
 }
 
-func (e *StreamEncoder) Encode(v interface{}) error {
+func (e *Encoder) Encode(v interface{}) error {
 	if e.closed {
-		return ErrStreamClosed
+		return ErrClosed
 	}
 
 	if e.first {
@@ -39,9 +39,9 @@ func (e *StreamEncoder) Encode(v interface{}) error {
 }
 
 // Close closes the stream. This _does not_ close the underlying io.Writer.
-func (e *StreamEncoder) Close() error {
+func (e *Encoder) Close() error {
 	if e.closed {
-		return ErrStreamClosed
+		return ErrClosed
 	}
 
 	// In case no elements are written, open the brace.
@@ -55,7 +55,7 @@ func (e *StreamEncoder) Close() error {
 	return nil
 }
 
-type StreamDecoder struct {
+type Decoder struct {
 	r     io.Reader
 	json  *json.Decoder
 	first bool
@@ -63,23 +63,23 @@ type StreamDecoder struct {
 	err   error
 }
 
-func NewStreamDecoder(r io.Reader) *StreamDecoder {
-	return &StreamDecoder{
+func NewDecoder(r io.Reader) *Decoder {
+	return &Decoder{
 		r:     r,
 		json:  json.NewDecoder(r),
 		first: true,
 	}
 }
 
-func (e *StreamDecoder) More() bool {
+func (e *Decoder) More() bool {
 	return e.json.More()
 }
 
-func (e *StreamDecoder) Err() error {
+func (e *Decoder) Err() error {
 	return e.err
 }
 
-func (e *StreamDecoder) Decode(v interface{}) error {
+func (e *Decoder) Decode(v interface{}) error {
 	if e.first {
 		// Read opening bracket.
 		_, err := e.json.Token()
