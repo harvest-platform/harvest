@@ -1,4 +1,4 @@
-package json
+package jsonstream
 
 import (
 	"bytes"
@@ -82,9 +82,5 @@ func TestDecoder(t *testing.T) {
 
 	if i != 3 {
 		t.Errorf("expected 3 elements, got %d", i)
-	}
-
-	if err := d.Err(); err != nil {
-		t.Error(err)
 	}
 }
